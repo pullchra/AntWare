@@ -12,7 +12,6 @@ after using NoMalware, switch back to RemoteSigned or Restricted.
 > Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
 
 **Restricted ( pattern )**
-> powershell -ExecutionPolicy Bypass -File "caminho\do\script.ps1"
 > Set-ExecutionPolicy Restricted -Scope LocalMachine
 # How To Use?
 - This file like many other internet files that are for powershell is detected as virus, so to download it **disable your antvirus**.
