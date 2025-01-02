@@ -9,7 +9,8 @@ NoMalware is a project I created to protect browsers from information-stealing m
 5. __Choose the browser__ you want to protect
 - After doing these steps, check if the folder was created in the chosen location. After that, delete the old default browser folder, which is usually located at ```%LOCALAPPDATA%```.
   
-  ![image](https://github.com/user-attachments/assets/ffabc807-100f-4605-bfdb-02466c54163e)
+![image](https://github.com/user-attachments/assets/cfe29326-534a-4df2-8067-04f10b43c784)
+
 
 Usually the folder you should delete would be the one with your user's files (User Data), example: **Edge** and **Chrome** or the **User Data folder** itself (the one with many files)
 ### Edge
