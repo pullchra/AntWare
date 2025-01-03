@@ -1,12 +1,12 @@
 # What is it?
-NoMalware is a project I created to protect browsers from information-stealing malware (grabbers/stealers/rats). It moves the user information to another folder that the user chooses where it will be created and forces the browser to use the new location, making it impossible for malware to find the information from the browsers, as it is no longer in the default location.
+AntWare is a project I created to protect browsers from information-stealing malware (grabbers/stealers/rats). It moves the user information to another folder that the user chooses where it will be created and forces the browser to use the new location, making it impossible for malware to find the information from the browsers, as it is no longer in the default location.
 > I added the discord app option as many users use it and a lot of malware steals the tokens saved inside the discord folders. It is in testing.
 # PowerShell
 Before using the file, I have to warn you of some important points, PowerShell may not want to run this script because of its execution policy, you must use the code below with PowerShell in the administrator so that it lets run the code. After using the code, and the file, you should return the policy to what it was before.
 ### Unrestricted
 > Set-ExecutionPolicy Unrestricted -Scope CurrentUser
 
-after using NoMalware, switch back to RemoteSigned or Restricted.
+after using AntWare, switch back to RemoteSigned or Restricted.
 ### RemoteSigned or Restricted
 **RemoteSigned**
 > Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
