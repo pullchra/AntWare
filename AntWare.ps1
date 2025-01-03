@@ -60,7 +60,9 @@ Function Configurar-NavegadorOuApp {
 Function Reverter-NavegadorOuApp {
     param(
         [string]$nomeAplicativo,
-        [string]$regKeyPath
+        [string]$regKeyPath,
+        [string]$subPasta,
+        [string]$pastaNavegator
     )
 
     Write-Host "Iniciando o processo de reversão para $nomeAplicativo..." -ForegroundColor Cyan
@@ -75,6 +77,19 @@ Function Reverter-NavegadorOuApp {
         }
     } else {
         Write-Host "Nenhuma configuração encontrada no Registro para $nomeAplicativo. Já está revertido." -ForegroundColor Yellow
+    }
+
+    $subPastaAplicativo = Join-Path -Path $pastaNavegator -ChildPath $subPasta
+
+    if (Test-Path $subPastaAplicativo) {
+        try {
+            Remove-Item -Path $subPastaAplicativo -Recurse -Force
+            Write-Host "A subpasta '$subPasta' foi removida com sucesso." -ForegroundColor Green
+        } catch {
+            Write-Host "Erro ao tentar remover a subpasta '$subPasta': $_" -ForegroundColor Red
+        }
+    } else {
+        Write-Host "A subpasta '$subPasta' não existe ou já foi removida." -ForegroundColor Yellow
     }
 }
 
@@ -118,7 +133,7 @@ if ($acao -eq 1) {
 
     if ($escolha -ge 1 -and $escolha -le $opcoes.Length) {
         $aplicativoEscolhido = $opcoes[$escolha - 1]
-        Reverter-NavegadorOuApp -nomeAplicativo $aplicativoEscolhido.Nome -regKeyPath $aplicativoEscolhido.RegKeyPath
+        Reverter-NavegadorOuApp -nomeAplicativo $aplicativoEscolhido.Nome -regKeyPath $aplicativoEscolhido.RegKeyPath -subPasta $aplicativoEscolhido.SubPasta -pastaNavegator $pastaNavegator
     } else {
         Write-Host "Opção inválida. O script será encerrado." -ForegroundColor Red
     }
