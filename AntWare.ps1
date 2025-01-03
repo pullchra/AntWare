@@ -144,3 +144,5 @@ if ($acao -eq 1) {
 Write-Host "Processo concluído! Pressione qualquer tecla para sair." -ForegroundColor Green
 [System.Console]::ReadKey($true) | Out-Null
 Stop-Transcript
+
+# By Pullchra
