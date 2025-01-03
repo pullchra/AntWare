@@ -1,4 +1,3 @@
-# Função para verificar se o script está sendo executado como administrador
 Function Verificar-Administrador {
     if (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) {
         Write-Host "Permissão de administrador necessária. Reexecutando o script com privilégios elevados..." -ForegroundColor Yellow
@@ -14,7 +13,6 @@ Write-Host "Iniciando o script..." -ForegroundColor Green
 
 $ErrorActionPreference = "Stop"
 
-# Função para verificar se a pasta 'navegator' existe no diretório especificado
 Function Identificar-Navegator {
     param(
         [string]$diretorioEscolhido
@@ -32,7 +30,6 @@ Function Identificar-Navegator {
     return $pastaNavegator
 }
 
-# Função para configurar o navegador ou aplicativo
 Function Configurar-NavegadorOuApp {
     param(
         [string]$nomeAplicativo,
@@ -60,7 +57,6 @@ Function Configurar-NavegadorOuApp {
     Write-Host "$nomeAplicativo configurado para usar a pasta: $subPastaAplicativo" -ForegroundColor Green
 }
 
-# Função para reverter as configurações
 Function Reverter-NavegadorOuApp {
     param(
         [string]$nomeAplicativo,
@@ -82,7 +78,6 @@ Function Reverter-NavegadorOuApp {
     }
 }
 
-# Lista de navegadores e aplicativos
 $opcoes = @(
     @{Nome = "Edge"; CaminhoInstalacao = "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"; SubPasta = "Edge"; RegKeyPath = "HKLM:\SOFTWARE\Policies\Microsoft\Edge"},
     @{Nome = "Chrome"; CaminhoInstalacao = "C:\Program Files\Google\Chrome\Application\chrome.exe"; SubPasta = "Chrome"; RegKeyPath = "HKLM:\SOFTWARE\Policies\Google\Chrome"},
@@ -90,11 +85,9 @@ $opcoes = @(
     @{Nome = "Opera"; CaminhoInstalacao = "C:\Program Files\Opera\opera.exe"; SubPasta = "Opera"; RegKeyPath = "HKLM:\SOFTWARE\Policies\Opera Software\Opera"}
 )
 
-# Perguntar o diretório
 $diretorioEscolhido = Read-Host "Digite o diretório completo onde está a pasta 'navegator'"
 $pastaNavegator = Identificar-Navegator -diretorioEscolhido $diretorioEscolhido
 
-# Escolha do usuário
 Write-Host "Escolha uma opção:" -ForegroundColor Cyan
 Write-Host "1. Configurar um navegador ou aplicativo."
 Write-Host "2. Reverter a configuração."
