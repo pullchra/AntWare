@@ -13,21 +13,43 @@ Write-Host "Iniciando o script..." -ForegroundColor Green
 
 $ErrorActionPreference = "Stop"
 
-Function Identificar-Navegator {
+Function Verificar-Instalacao {
     param(
-        [string]$diretorioEscolhido
+        [string]$nomeAplicativo,
+        [string]$caminhoInstalacao
     )
 
-    $pastaNavegator = Join-Path -Path $diretorioEscolhido -ChildPath "navegator"
-
-    if (-not (Test-Path $pastaNavegator)) {
-        Write-Host "A pasta 'navegator' não foi encontrada no diretório especificado: $diretorioEscolhido" -ForegroundColor Red
-        Write-Host "Certifique-se de criar a pasta antes de continuar." -ForegroundColor Yellow
-        Exit
+    if (Test-Path $caminhoInstalacao) {
+        Write-Host "$nomeAplicativo está instalado." -ForegroundColor Cyan
+        return $true
+    } else {
+        Write-Host "$nomeAplicativo não está instalado. Verifique se ele está corretamente instalado no seu sistema." -ForegroundColor Yellow
+        return $false
     }
+}
 
-    Write-Host "A pasta 'navegator' foi identificada em: $pastaNavegator" -ForegroundColor Green
-    return $pastaNavegator
+Function Copiar-Dados {
+    param(
+        [string]$origem,
+        [string]$destino
+    )
+
+    if (Test-Path $origem) {
+        if (-not (Test-Path $destino)) {
+            New-Item -Path $destino -ItemType Directory -Force
+            Write-Host "Criada nova pasta de destino: $destino" -ForegroundColor Green
+        }
+
+        Write-Host "Copiando dados de '$origem' para '$destino'..." -ForegroundColor Cyan
+        try {
+            Copy-Item -Path "$origem\*" -Destination $destino -Recurse -Force
+            Write-Host "Dados copiados com sucesso!" -ForegroundColor Green
+        } catch {
+            Write-Host "Erro ao copiar dados: $_" -ForegroundColor Red
+        }
+    } else {
+        Write-Host "A pasta de origem '$origem' não foi encontrada. Nenhuma ação será realizada." -ForegroundColor Yellow
+    }
 }
 
 Function Configurar-NavegadorOuApp {
@@ -36,104 +58,83 @@ Function Configurar-NavegadorOuApp {
         [string]$caminhoInstalacao,
         [string]$subPasta,
         [string]$regKeyPath,
-        [string]$pastaNavegator
+        [string]$pastaAntiga
     )
 
-    Write-Host "Configurando $nomeAplicativo..." -ForegroundColor Cyan
-    $subPastaAplicativo = Join-Path -Path $pastaNavegator -ChildPath $subPasta
+    if (Verificar-Instalacao -nomeAplicativo $nomeAplicativo -caminhoInstalacao $caminhoInstalacao) {
+        $subPastaAplicativo = Join-Path -Path $pastaNavegator -ChildPath $subPasta
+        if (-not (Test-Path $subPastaAplicativo)) {
+            New-Item -Path $subPastaAplicativo -ItemType Directory -Force
+            Write-Host "Subpasta '$subPasta' criada em: $subPastaAplicativo" -ForegroundColor Green
+        }
 
-    if (-not (Test-Path $subPastaAplicativo)) {
-        New-Item -Path $subPastaAplicativo -ItemType Directory -Force
-        Write-Host "Subpasta '$subPasta' criada em: $subPastaAplicativo" -ForegroundColor Green
+        Copiar-Dados -origem $pastaAntiga -destino $subPastaAplicativo
+
+        if (-not (Test-Path $regKeyPath)) {
+            Write-Host "Criando chave de registro: $regKeyPath" -ForegroundColor Yellow
+            New-Item -Path $regKeyPath -Force
+        }
+
+        Set-ItemProperty -Path $regKeyPath -Name "UserDataDir" -Value $subPastaAplicativo
+        Set-ItemProperty -Path $regKeyPath -Name "ForceUserDataDir" -Value 1
+        Write-Host "$nomeAplicativo configurado para usar a pasta: $subPastaAplicativo" -ForegroundColor Green
     }
-
-    if (-not (Test-Path $regKeyPath)) {
-        New-Item -Path $regKeyPath -Force
-        Write-Host "Criada chave de registro: $regKeyPath" -ForegroundColor Yellow
-    }
-
-    Set-ItemProperty -Path $regKeyPath -Name "UserDataDir" -Value $subPastaAplicativo
-    Set-ItemProperty -Path $regKeyPath -Name "ForceUserDataDir" -Value 1
-    Write-Host "$nomeAplicativo configurado para usar a pasta: $subPastaAplicativo" -ForegroundColor Green
 }
 
-Function Reverter-NavegadorOuApp {
+Function Reverter-Configuracoes {
     param(
         [string]$nomeAplicativo,
         [string]$regKeyPath,
-        [string]$subPasta,
-        [string]$pastaNavegator
+        [string]$subPasta
     )
 
-    Write-Host "Iniciando o processo de reversão para $nomeAplicativo..." -ForegroundColor Cyan
-
-    if (Test-Path $regKeyPath) {
-        try {
-            Remove-ItemProperty -Path $regKeyPath -Name "UserDataDir" -ErrorAction SilentlyContinue
-            Remove-ItemProperty -Path $regKeyPath -Name "ForceUserDataDir" -ErrorAction SilentlyContinue
-            Write-Host "As configurações de registro para $nomeAplicativo foram removidas com sucesso." -ForegroundColor Green
-        } catch {
-            Write-Host "Erro ao tentar remover as configurações do Registro para $nomeAplicativo: $_" -ForegroundColor Red
-        }
+    $pastaAplicativo = Join-Path -Path $pastaNavegator -ChildPath $subPasta
+    if (Test-Path $pastaAplicativo) {
+        Remove-Item -Path $pastaAplicativo -Recurse -Force
+        Write-Host "Pasta '$subPasta' removida com sucesso." -ForegroundColor Green
     } else {
-        Write-Host "Nenhuma configuração encontrada no Registro para $nomeAplicativo. Já está revertido." -ForegroundColor Yellow
+        Write-Host "A pasta '$subPasta' não foi encontrada. Nenhuma ação será realizada." -ForegroundColor Yellow
     }
 
-    $subPastaAplicativo = Join-Path -Path $pastaNavegator -ChildPath $subPasta
-
-    if (Test-Path $subPastaAplicativo) {
-        try {
-            Remove-Item -Path $subPastaAplicativo -Recurse -Force
-            Write-Host "A subpasta '$subPasta' foi removida com sucesso." -ForegroundColor Green
-        } catch {
-            Write-Host "Erro ao tentar remover a subpasta '$subPasta': $_" -ForegroundColor Red
-        }
+    if (Test-Path $regKeyPath) {
+        Remove-Item -Path $regKeyPath -Recurse -Force
+        Write-Host "Configuração de registro removida para '$nomeAplicativo'." -ForegroundColor Green
     } else {
-        Write-Host "A subpasta '$subPasta' não existe ou já foi removida." -ForegroundColor Yellow
+        Write-Host "A chave de registro para '$nomeAplicativo' não foi encontrada." -ForegroundColor Yellow
     }
 }
 
+$diretorioEscolhido = Read-Host "Digite o caminho completo onde a pasta 'navegator' está localizada (exemplo: C:\Testes\) "
+$pastaNavegator = Join-Path -Path $diretorioEscolhido -ChildPath "navegator"
+
+if (-not (Test-Path $pastaNavegator)) {
+    Write-Host "A pasta 'navegator' não foi encontrada no diretório especificado. O script será encerrado." -ForegroundColor Red
+    Exit
+}
+
 $opcoes = @(
-    @{Nome = "Edge"; CaminhoInstalacao = "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"; SubPasta = "Edge"; RegKeyPath = "HKLM:\SOFTWARE\Policies\Microsoft\Edge"},
-    @{Nome = "Chrome"; CaminhoInstalacao = "C:\Program Files\Google\Chrome\Application\chrome.exe"; SubPasta = "Chrome"; RegKeyPath = "HKLM:\SOFTWARE\Policies\Google\Chrome"},
-    @{Nome = "Brave"; CaminhoInstalacao = "C:\Program Files\BraveSoftware\Brave-Browser\Application\brave.exe"; SubPasta = "Brave"; RegKeyPath = "HKLM:\SOFTWARE\Policies\BraveSoftware\Brave-Browser"},
-    @{Nome = "Opera"; CaminhoInstalacao = "C:\Program Files\Opera\opera.exe"; SubPasta = "Opera"; RegKeyPath = "HKLM:\SOFTWARE\Policies\Opera Software\Opera"}
+    @{Nome = "Edge"; CaminhoInstalacao = "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"; SubPasta = "Edge"; RegKeyPath = "HKLM:\SOFTWARE\Policies\Microsoft\Edge"; PastaAntiga = "$env:LOCALAPPDATA\Microsoft\Edge\User Data"},
+    @{Nome = "Chrome"; CaminhoInstalacao = "C:\Program Files\Google\Chrome\Application\chrome.exe"; SubPasta = "Chrome"; RegKeyPath = "HKLM:\SOFTWARE\Policies\Google\Chrome"; PastaAntiga = "$env:LOCALAPPDATA\Google\Chrome\User Data"},
+    @{Nome = "Brave"; CaminhoInstalacao = "C:\Program Files\BraveSoftware\Brave-Browser\Application\brave.exe"; SubPasta = "Brave"; RegKeyPath = "HKLM:\SOFTWARE\Policies\BraveSoftware\Brave-Browser"; PastaAntiga = "$env:LOCALAPPDATA\BraveSoftware\Brave-Browser\User Data"},
+    @{Nome = "Opera"; CaminhoInstalacao = "C:\Program Files\Opera\opera.exe"; SubPasta = "Opera"; RegKeyPath = "HKLM:\SOFTWARE\Policies\Opera Software\Opera"; PastaAntiga = "$env:LOCALAPPDATA\Opera Software\Opera Stable"},
+    @{Nome = "Discord"; CaminhoInstalacao = "C:\Users\$env:USERNAME\AppData\Local\Discord\app-*.exe"; SubPasta = "Discord"; RegKeyPath = "HKCU:\Software\Discord"; PastaAntiga = "$env:APPDATA\discord"}
 )
 
-$diretorioEscolhido = Read-Host "Digite o diretório completo onde está a pasta 'navegator'"
-$pastaNavegator = Identificar-Navegator -diretorioEscolhido $diretorioEscolhido
+Write-Host "Escolha uma opção:"
+for ($i = 0; $i -lt $opcoes.Length; $i++) {
+    Write-Host "$($i + 1) - $($opcoes[$i].Nome)"
+}
 
-Write-Host "Escolha uma opção:" -ForegroundColor Cyan
-Write-Host "1. Configurar um navegador ou aplicativo."
-Write-Host "2. Reverter a configuração."
+$escolha = Read-Host "Digite o número da opção desejada"
 
-$acao = Read-Host "Digite o número da opção desejada"
-
-if ($acao -eq 1) {
-    Write-Host "Escolha o aplicativo ou navegador para configurar:" -ForegroundColor Cyan
-    for ($i = 0; $i -lt $opcoes.Length; $i++) {
-        Write-Host "$($i + 1). $($opcoes[$i].Nome)"
-    }
-
-    $escolha = Read-Host "Digite o número correspondente ao aplicativo ou navegador"
-
-    if ($escolha -ge 1 -and $escolha -le $opcoes.Length) {
-        $aplicativoEscolhido = $opcoes[$escolha - 1]
-        Configurar-NavegadorOuApp -nomeAplicativo $aplicativoEscolhido.Nome -caminhoInstalacao $aplicativoEscolhido.CaminhoInstalacao -subPasta $aplicativoEscolhido.SubPasta -regKeyPath $aplicativoEscolhido.RegKeyPath -pastaNavegator $pastaNavegator
-    } else {
-        Write-Host "Opção inválida. O script será encerrado." -ForegroundColor Red
-    }
-} elseif ($acao -eq 2) {
-    Write-Host "Escolha o aplicativo ou navegador para reverter:" -ForegroundColor Cyan
-    for ($i = 0; $i -lt $opcoes.Length; $i++) {
-        Write-Host "$($i + 1). $($opcoes[$i].Nome)"
-    }
-
-    $escolha = Read-Host "Digite o número correspondente ao aplicativo ou navegador"
-
-    if ($escolha -ge 1 -and $escolha -le $opcoes.Length) {
-        $aplicativoEscolhido = $opcoes[$escolha - 1]
-        Reverter-NavegadorOuApp -nomeAplicativo $aplicativoEscolhido.Nome -regKeyPath $aplicativoEscolhido.RegKeyPath -subPasta $aplicativoEscolhido.SubPasta -pastaNavegator $pastaNavegator
+if ($escolha -ge 1 -and $escolha -le $opcoes.Length) {
+    $aplicativoEscolhido = $opcoes[$escolha - 1]
+    $acao = Read-Host "Digite 'C' para configurar ou 'R' para reverter as configurações"
+    
+    if ($acao -ieq "C") {
+        Configurar-NavegadorOuApp -nomeAplicativo $aplicativoEscolhido.Nome -caminhoInstalacao $aplicativoEscolhido.CaminhoInstalacao -subPasta $aplicativoEscolhido.SubPasta -regKeyPath $aplicativoEscolhido.RegKeyPath -pastaAntiga $aplicativoEscolhido.PastaAntiga
+    } elseif ($acao -ieq "R") {
+        Reverter-Configuracoes -nomeAplicativo $aplicativoEscolhido.Nome -regKeyPath $aplicativoEscolhido.RegKeyPath -subPasta $aplicativoEscolhido.SubPasta
     } else {
         Write-Host "Opção inválida. O script será encerrado." -ForegroundColor Red
     }
@@ -144,5 +145,3 @@ if ($acao -eq 1) {
 Write-Host "Processo concluído! Pressione qualquer tecla para sair." -ForegroundColor Green
 [System.Console]::ReadKey($true) | Out-Null
 Stop-Transcript
-
-# By Pullchra
