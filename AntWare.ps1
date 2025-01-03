@@ -1,147 +1,147 @@
-Function Verificar-Administrador {
+Function Check-Administrator {
     if (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) {
-        Write-Host "Permissão de administrador necessária. Reexecutando o script com privilégios elevados..." -ForegroundColor Yellow
+        Write-Host "Administrator permission required. Rerunning the script with elevated privileges..." -ForegroundColor Yellow
         Start-Process -FilePath "powershell.exe" -ArgumentList "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`"" -Verb RunAs
         Exit
     }
 }
 
-Verificar-Administrador
+Check-Administrator
 
 Start-Transcript -Path "$env:TEMP\script-log.txt" -Append
-Write-Host "Iniciando o script..." -ForegroundColor Green
+Write-Host "Starting the script..." -ForegroundColor Green
 
 $ErrorActionPreference = "Stop"
 
-Function Verificar-Instalacao {
+Function Check-Installation {
     param(
-        [string]$nomeAplicativo,
-        [string]$caminhoInstalacao
+        [string]$appName,
+        [string]$installPath
     )
 
-    if (Test-Path $caminhoInstalacao) {
-        Write-Host "$nomeAplicativo está instalado." -ForegroundColor Cyan
+    if (Test-Path $installPath) {
+        Write-Host "$appName is installed." -ForegroundColor Cyan
         return $true
     } else {
-        Write-Host "$nomeAplicativo não está instalado. Verifique se ele está corretamente instalado no seu sistema." -ForegroundColor Yellow
+        Write-Host "$appName is not installed. Please make sure it is properly installed on your system." -ForegroundColor Yellow
         return $false
     }
 }
 
-Function Copiar-Dados {
+Function Copy-Data {
     param(
-        [string]$origem,
-        [string]$destino
+        [string]$source,
+        [string]$destination
     )
 
-    if (Test-Path $origem) {
-        if (-not (Test-Path $destino)) {
-            New-Item -Path $destino -ItemType Directory -Force
-            Write-Host "Criada nova pasta de destino: $destino" -ForegroundColor Green
+    if (Test-Path $source) {
+        if (-not (Test-Path $destination)) {
+            New-Item -Path $destination -ItemType Directory -Force
+            Write-Host "New destination folder created: $destination" -ForegroundColor Green
         }
 
-        Write-Host "Copiando dados de '$origem' para '$destino'..." -ForegroundColor Cyan
+        Write-Host "Copying data from '$source' to '$destination'..." -ForegroundColor Cyan
         try {
-            Copy-Item -Path "$origem\*" -Destination $destino -Recurse -Force
-            Write-Host "Dados copiados com sucesso!" -ForegroundColor Green
+            Copy-Item -Path "$source\*" -Destination $destination -Recurse -Force
+            Write-Host "Data copied successfully!" -ForegroundColor Green
         } catch {
-            Write-Host "Erro ao copiar dados: $_" -ForegroundColor Red
+            Write-Host "Error copying data: $_" -ForegroundColor Red
         }
     } else {
-        Write-Host "A pasta de origem '$origem' não foi encontrada. Nenhuma ação será realizada." -ForegroundColor Yellow
+        Write-Host "Source folder '$source' not found. No action will be performed." -ForegroundColor Yellow
     }
 }
 
-Function Configurar-NavegadorOuApp {
+Function Configure-BrowserOrApp {
     param(
-        [string]$nomeAplicativo,
-        [string]$caminhoInstalacao,
-        [string]$subPasta,
+        [string]$appName,
+        [string]$installPath,
+        [string]$subFolder,
         [string]$regKeyPath,
-        [string]$pastaAntiga
+        [string]$oldFolder
     )
 
-    if (Verificar-Instalacao -nomeAplicativo $nomeAplicativo -caminhoInstalacao $caminhoInstalacao) {
-        $subPastaAplicativo = Join-Path -Path $pastaNavegator -ChildPath $subPasta
-        if (-not (Test-Path $subPastaAplicativo)) {
-            New-Item -Path $subPastaAplicativo -ItemType Directory -Force
-            Write-Host "Subpasta '$subPasta' criada em: $subPastaAplicativo" -ForegroundColor Green
+    if (Check-Installation -appName $appName -installPath $installPath) {
+        $appSubFolder = Join-Path -Path $navigatorFolder -ChildPath $subFolder
+        if (-not (Test-Path $appSubFolder)) {
+            New-Item -Path $appSubFolder -ItemType Directory -Force
+            Write-Host "Subfolder '$subFolder' created at: $appSubFolder" -ForegroundColor Green
         }
 
-        Copiar-Dados -origem $pastaAntiga -destino $subPastaAplicativo
+        Copy-Data -source $oldFolder -destination $appSubFolder
 
         if (-not (Test-Path $regKeyPath)) {
-            Write-Host "Criando chave de registro: $regKeyPath" -ForegroundColor Yellow
+            Write-Host "Creating registry key: $regKeyPath" -ForegroundColor Yellow
             New-Item -Path $regKeyPath -Force
         }
 
-        Set-ItemProperty -Path $regKeyPath -Name "UserDataDir" -Value $subPastaAplicativo
+        Set-ItemProperty -Path $regKeyPath -Name "UserDataDir" -Value $appSubFolder
         Set-ItemProperty -Path $regKeyPath -Name "ForceUserDataDir" -Value 1
-        Write-Host "$nomeAplicativo configurado para usar a pasta: $subPastaAplicativo" -ForegroundColor Green
+        Write-Host "$appName configured to use folder: $appSubFolder" -ForegroundColor Green
     }
 }
 
-Function Reverter-Configuracoes {
+Function Revert-Configurations {
     param(
-        [string]$nomeAplicativo,
+        [string]$appName,
         [string]$regKeyPath,
-        [string]$subPasta
+        [string]$subFolder
     )
 
-    $pastaAplicativo = Join-Path -Path $pastaNavegator -ChildPath $subPasta
-    if (Test-Path $pastaAplicativo) {
-        Remove-Item -Path $pastaAplicativo -Recurse -Force
-        Write-Host "Pasta '$subPasta' removida com sucesso." -ForegroundColor Green
+    $appFolder = Join-Path -Path $navigatorFolder -ChildPath $subFolder
+    if (Test-Path $appFolder) {
+        Remove-Item -Path $appFolder -Recurse -Force
+        Write-Host "Folder '$subFolder' removed successfully." -ForegroundColor Green
     } else {
-        Write-Host "A pasta '$subPasta' não foi encontrada. Nenhuma ação será realizada." -ForegroundColor Yellow
+        Write-Host "Folder '$subFolder' not found. No action will be performed." -ForegroundColor Yellow
     }
 
     if (Test-Path $regKeyPath) {
         Remove-Item -Path $regKeyPath -Recurse -Force
-        Write-Host "Configuração de registro removida para '$nomeAplicativo'." -ForegroundColor Green
+        Write-Host "Registry configuration removed for '$appName'." -ForegroundColor Green
     } else {
-        Write-Host "A chave de registro para '$nomeAplicativo' não foi encontrada." -ForegroundColor Yellow
+        Write-Host "Registry key for '$appName' not found." -ForegroundColor Yellow
     }
 }
 
-$diretorioEscolhido = Read-Host "Digite o caminho completo onde a pasta 'navegator' está localizada (exemplo: C:\Testes\) "
-$pastaNavegator = Join-Path -Path $diretorioEscolhido -ChildPath "navegator"
+$chosenDirectory = Read-Host "Enter the full path where the 'navigator' folder is located (example: C:\Test\) "
+$navigatorFolder = Join-Path -Path $chosenDirectory -ChildPath "navigator"
 
-if (-not (Test-Path $pastaNavegator)) {
-    Write-Host "A pasta 'navegator' não foi encontrada no diretório especificado. O script será encerrado." -ForegroundColor Red
+if (-not (Test-Path $navigatorFolder)) {
+    Write-Host "The 'navigator' folder was not found in the specified directory. The script will be terminated." -ForegroundColor Red
     Exit
 }
 
-$opcoes = @(
-    @{Nome = "Edge"; CaminhoInstalacao = "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"; SubPasta = "Edge"; RegKeyPath = "HKLM:\SOFTWARE\Policies\Microsoft\Edge"; PastaAntiga = "$env:LOCALAPPDATA\Microsoft\Edge\User Data"},
-    @{Nome = "Chrome"; CaminhoInstalacao = "C:\Program Files\Google\Chrome\Application\chrome.exe"; SubPasta = "Chrome"; RegKeyPath = "HKLM:\SOFTWARE\Policies\Google\Chrome"; PastaAntiga = "$env:LOCALAPPDATA\Google\Chrome\User Data"},
-    @{Nome = "Brave"; CaminhoInstalacao = "C:\Program Files\BraveSoftware\Brave-Browser\Application\brave.exe"; SubPasta = "Brave"; RegKeyPath = "HKLM:\SOFTWARE\Policies\BraveSoftware\Brave-Browser"; PastaAntiga = "$env:LOCALAPPDATA\BraveSoftware\Brave-Browser\User Data"},
-    @{Nome = "Opera"; CaminhoInstalacao = "C:\Program Files\Opera\opera.exe"; SubPasta = "Opera"; RegKeyPath = "HKLM:\SOFTWARE\Policies\Opera Software\Opera"; PastaAntiga = "$env:LOCALAPPDATA\Opera Software\Opera Stable"},
-    @{Nome = "Discord"; CaminhoInstalacao = "C:\Users\$env:USERNAME\AppData\Local\Discord\app-*.exe"; SubPasta = "Discord"; RegKeyPath = "HKCU:\Software\Discord"; PastaAntiga = "$env:APPDATA\discord"}
+$options = @(
+    @{Name = "Edge"; InstallPath = "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"; SubFolder = "Edge"; RegKeyPath = "HKLM:\SOFTWARE\Policies\Microsoft\Edge"; OldFolder = "$env:LOCALAPPDATA\Microsoft\Edge\User Data"},
+    @{Name = "Chrome"; InstallPath = "C:\Program Files\Google\Chrome\Application\chrome.exe"; SubFolder = "Chrome"; RegKeyPath = "HKLM:\SOFTWARE\Policies\Google\Chrome"; OldFolder = "$env:LOCALAPPDATA\Google\Chrome\User Data"},
+    @{Name = "Brave"; InstallPath = "C:\Program Files\BraveSoftware\Brave-Browser\Application\brave.exe"; SubFolder = "Brave"; RegKeyPath = "HKLM:\SOFTWARE\Policies\BraveSoftware\Brave-Browser"; OldFolder = "$env:LOCALAPPDATA\BraveSoftware\Brave-Browser\User Data"},
+    @{Name = "Opera"; InstallPath = "C:\Program Files\Opera\opera.exe"; SubFolder = "Opera"; RegKeyPath = "HKLM:\SOFTWARE\Policies\Opera Software\Opera"; OldFolder = "$env:LOCALAPPDATA\Opera Software\Opera Stable"},
+    @{Name = "Discord"; InstallPath = "C:\Users\$env:USERNAME\AppData\Local\Discord\app-*.exe"; SubFolder = "Discord"; RegKeyPath = "HKCU:\Software\Discord"; OldFolder = "$env:APPDATA\discord"}
 )
 
-Write-Host "Escolha uma opção:"
-for ($i = 0; $i -lt $opcoes.Length; $i++) {
-    Write-Host "$($i + 1) - $($opcoes[$i].Nome)"
+Write-Host "Choose an option:"
+for ($i = 0; $i -lt $options.Length; $i++) {
+    Write-Host "$($i + 1) - $($options[$i].Name)"
 }
 
-$escolha = Read-Host "Digite o número da opção desejada"
+$choice = Read-Host "Enter the number of the desired option"
 
-if ($escolha -ge 1 -and $escolha -le $opcoes.Length) {
-    $aplicativoEscolhido = $opcoes[$escolha - 1]
-    $acao = Read-Host "Digite 'C' para configurar ou 'R' para reverter as configurações"
+if ($choice -ge 1 -and $choice -le $options.Length) {
+    $chosenApp = $options[$choice - 1]
+    $action = Read-Host "Enter 'C' to configure or 'R' to revert the settings"
     
-    if ($acao -ieq "C") {
-        Configurar-NavegadorOuApp -nomeAplicativo $aplicativoEscolhido.Nome -caminhoInstalacao $aplicativoEscolhido.CaminhoInstalacao -subPasta $aplicativoEscolhido.SubPasta -regKeyPath $aplicativoEscolhido.RegKeyPath -pastaAntiga $aplicativoEscolhido.PastaAntiga
-    } elseif ($acao -ieq "R") {
-        Reverter-Configuracoes -nomeAplicativo $aplicativoEscolhido.Nome -regKeyPath $aplicativoEscolhido.RegKeyPath -subPasta $aplicativoEscolhido.SubPasta
+    if ($action -ieq "C") {
+        Configure-BrowserOrApp -appName $chosenApp.Name -installPath $chosenApp.InstallPath -subFolder $chosenApp.SubFolder -regKeyPath $chosenApp.RegKeyPath -oldFolder $chosenApp.OldFolder
+    } elseif ($action -ieq "R") {
+        Revert-Configurations -appName $chosenApp.Name -regKeyPath $chosenApp.RegKeyPath -subFolder $chosenApp.SubFolder
     } else {
-        Write-Host "Opção inválida. O script será encerrado." -ForegroundColor Red
+        Write-Host "Invalid option. The script will be terminated." -ForegroundColor Red
     }
 } else {
-    Write-Host "Opção inválida. O script será encerrado." -ForegroundColor Red
+    Write-Host "Invalid option. The script will be terminated." -ForegroundColor Red
 }
 
-Write-Host "Processo concluído! Pressione qualquer tecla para sair." -ForegroundColor Green
+Write-Host "Process completed! Press any key to exit." -ForegroundColor Green
 [System.Console]::ReadKey($true) | Out-Null
 Stop-Transcript
