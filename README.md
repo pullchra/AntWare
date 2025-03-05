@@ -26,4 +26,4 @@ after using AntWare, switch back to RemoteSigned or Restricted.
 
 # Credits and Warns
 I created this project to help those who suffer from this type of malware. But as it is in testing I am not responsible if there is an error on your computer, this file messes with the folders of your browser.
-**Credits for Pullchra**
+**Credits for ME**
