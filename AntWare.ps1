@@ -1,17 +1,8 @@
-Function Check-Administrator {
-    if (-not ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) {
-        Write-Host "Administrator permission required. Re-running the script with elevated privileges..." -ForegroundColor Yellow
-        Start-Process -FilePath "powershell.exe" -ArgumentList "-NoProfile -ExecutionPolicy Bypass -File `"$PSCommandPath`"" -Verb RunAs
-        Exit
-    }
-}
-
-Check-Administrator
-
 Start-Transcript -Path "$env:TEMP\script-log.txt" -Append
 Write-Host "Starting the script..." -ForegroundColor Green
 
 $ErrorActionPreference = "Stop"
+Write-Host "This script is designed to work only on Windows." -ForegroundColor Yellow
 
 Function Check-Installation {
     param(
@@ -52,89 +43,82 @@ Function Copy-Data {
     }
 }
 
-Function Configure-BrowserOrApp {
-    param(
-        [string]$appName,
-        [string]$installPath,
-        [string]$subFolder,
-        [string]$regKeyPath,
-        [string]$oldFolder
-    )
-
-    if (Check-Installation -appName $appName -installPath $installPath) {
-        $subFolderApp = Join-Path -Path $navigatorFolder -ChildPath $subFolder
-        if (-not (Test-Path $subFolderApp)) {
-            New-Item -Path $subFolderApp -ItemType Directory -Force
-            Write-Host "Subfolder '$subFolder' created in: $subFolderApp" -ForegroundColor Green
-        }
-
-        Copy-Data -source $oldFolder -destination $subFolderApp
-
-        if (-not (Test-Path $regKeyPath)) {
-            Write-Host "Creating registry key: $regKeyPath" -ForegroundColor Yellow
-            New-Item -Path $regKeyPath -Force
-        }
-
-        Set-ItemProperty -Path $regKeyPath -Name "UserDataDir" -Value $subFolderApp
-        Set-ItemProperty -Path $regKeyPath -Name "ForceUserDataDir" -Value 1
-        Write-Host "$appName configured to use the folder: $subFolderApp" -ForegroundColor Green
-    }
-}
-
-Function Revert-Configurations {
-    param(
-        [string]$appName,
-        [string]$regKeyPath,
-        [string]$subFolder
-    )
-
-    $appFolder = Join-Path -Path $navigatorFolder -ChildPath $subFolder
-    if (Test-Path $appFolder) {
-        Remove-Item -Path $appFolder -Recurse -Force
-        Write-Host "Subfolder '$subFolder' removed successfully." -ForegroundColor Green
-    } else {
-        Write-Host "The subfolder '$subFolder' was not found. No action will be taken." -ForegroundColor Yellow
-    }
-
-    if (Test-Path $regKeyPath) {
-        Remove-Item -Path $regKeyPath -Recurse -Force
-        Write-Host "Registry configuration removed for '$appName'." -ForegroundColor Green
-    } else {
-        Write-Host "Registry key for '$appName' not found." -ForegroundColor Yellow
-    }
-}
-
 $chosenDirectory = Read-Host "Enter the full path where the 'navegator' folder is located (example: C:\Test\)"
 $navigatorFolder = Join-Path -Path $chosenDirectory -ChildPath "navegator"
 
 if (-not (Test-Path $navigatorFolder)) {
-    Write-Host "The 'navegator' folder was not found in the specified directory. The script will exit." -ForegroundColor Red
-    Exit
+    New-Item -Path $navigatorFolder -ItemType Directory -Force
+    Write-Host "The 'navegator' folder was created successfully." -ForegroundColor Green
 }
-
-$options = @(
-    @{Name = "Edge"; InstallPath = "C:\Program Files (x86)\Microsoft\Edge\Application\msedge.exe"; SubFolder = "Edge"; RegKeyPath = "HKLM:\SOFTWARE\Policies\Microsoft\Edge"; OldFolder = "$env:LOCALAPPDATA\Microsoft\Edge\User Data"},
-    @{Name = "Chrome"; InstallPath = "C:\Program Files\Google\Chrome\Application\chrome.exe"; SubFolder = "Chrome"; RegKeyPath = "HKLM:\SOFTWARE\Policies\Google\Chrome"; OldFolder = "$env:LOCALAPPDATA\Google\Chrome\User Data"},
-    @{Name = "Brave"; InstallPath = "C:\Program Files\BraveSoftware\Brave-Browser\Application\brave.exe"; SubFolder = "Brave"; RegKeyPath = "HKLM:\SOFTWARE\Policies\BraveSoftware\Brave-Browser"; OldFolder = "$env:LOCALAPPDATA\BraveSoftware\Brave-Browser\User Data"},
-    @{Name = "Opera"; InstallPath = "C:\Program Files\Opera\opera.exe"; SubFolder = "Opera"; RegKeyPath = "HKLM:\SOFTWARE\Policies\Opera Software\Opera"; OldFolder = "$env:LOCALAPPDATA\Opera Software\Opera Stable"},
-    @{Name = "Discord"; InstallPath = "C:\Users\$env:USERNAME\AppData\Local\Discord\app-*.exe"; SubFolder = "Discord"; RegKeyPath = "HKCU:\Software\Discord"; OldFolder = "$env:APPDATA\discord"}
+$apps = @(
+    @{Name = "Edge"; Path = "$env:LOCALAPPDATA\Microsoft\Edge\User Data"; RegKey = "HKLM:\\SOFTWARE\\Policies\\Microsoft\\Edge"},
+    @{Name = "Chrome"; Path = "$env:LOCALAPPDATA\Google\Chrome\User Data"; RegKey = "HKLM:\\SOFTWARE\\Policies\\Google\\Chrome"},
+    @{Name = "Brave"; Path = "$env:LOCALAPPDATA\BraveSoftware\Brave-Browser\User Data"; RegKey = "HKLM:\\SOFTWARE\\Policies\\BraveSoftware\\Brave-Browser"},
+    @{Name = "Opera"; Path = "$env:LOCALAPPDATA\Opera Software\Opera Stable"; RegKey = "HKLM:\\SOFTWARE\\Policies\\Opera Software\\Opera"},
+    @{Name = "Discord"; Path = "$env:LOCALAPPDATA\Discord"; RegKey = "HKLM:\\SOFTWARE\\Policies\\Discord"}
 )
 
-Write-Host "Choose an option:"
-for ($i = 0; $i -lt $options.Length; $i++) {
-    Write-Host "$($i + 1) - $($options[$i].Name)"
+Write-Host "Choose an application to configure:" -ForegroundColor Cyan
+for ($i = 0; $i -lt $apps.Length; $i++) {
+    Write-Host "$($i + 1) - $($apps[$i].Name)"
 }
 
-$choice = Read-Host "Enter the number of the desired option"
+$choice = Read-Host "Enter the number of the desired application"
 
-if ($choice -ge 1 -and $choice -le $options.Length) {
-    $chosenApp = $options[$choice - 1]
-    $action = Read-Host "Enter 'C' to configure or 'R' to revert the configurations"
+if ($choice -ge 1 -and $choice -le $apps.Length) {
+    $selectedApp = $apps[$choice - 1]
+    $appPath = $selectedApp.Path
+    $regPath = $selectedApp.RegKey
+    
+    Write-Host "Choose an action:" -ForegroundColor Cyan
+    Write-Host "1 - Configure (Move data to the 'navegator' folder and update settings)"
+    Write-Host "2 - Revert (Restore original settings and move data back to the original location)"
+    
+    $action = Read-Host "Enter the number of the desired action"
+    
+    if ($action -eq "1") {
+        if (Check-Installation -appName $selectedApp.Name -installPath $appPath) {
+            $destinationFolder = Join-Path -Path "$navigatorFolder\$($selectedApp.Name)" -ChildPath "Data"
+            if (-not (Test-Path $destinationFolder)) {
+                New-Item -Path $destinationFolder -ItemType Directory -Force
+                Write-Host "Created folder: $destinationFolder" -ForegroundColor Green
+            }
+            Copy-Data -source $appPath -destination $destinationFolder
+            
+            Remove-Item -Path "$appPath" -Recurse -Force
+            Write-Host "Original data removed from $appPath." -ForegroundColor Yellow
 
-    if ($action -ieq "C") {
-        Configure-BrowserOrApp -appName $chosenApp.Name -installPath $chosenApp.InstallPath -subFolder $chosenApp.SubFolder -regKeyPath $chosenApp.RegKeyPath -oldFolder $chosenApp.OldFolder
-    } elseif ($action -ieq "R") {
-        Revert-Configurations -appName $chosenApp.Name -regKeyPath $chosenApp.RegKeyPath -subFolder $chosenApp.SubFolder
+            if ($regPath) {
+                if (-not (Test-Path $regPath)) {
+                    New-Item -Path $regPath -Force
+                }
+                Set-ItemProperty -Path $regPath -Name "UserDataDir" -Value "$destinationFolder"
+                Set-ItemProperty -Path $regPath -Name "ForceUserDataDir" -Value 1
+            }
+            Write-Host "$($selectedApp.Name) configured successfully." -ForegroundColor Green
+        }
+    } elseif ($action -eq "2") {
+        $dataFolder = Join-Path -Path "$navigatorFolder\$($selectedApp.Name)" -ChildPath "Data"
+
+        if (Test-Path $dataFolder) {
+            if (-not (Test-Path $appPath)) {
+                New-Item -Path $appPath -ItemType Directory -Force
+                Write-Host "Original folder recreated: $appPath" -ForegroundColor Green
+            }
+
+            Copy-Data -source $dataFolder -destination $appPath
+            Write-Host "Data moved back to the original location." -ForegroundColor Green
+
+            Remove-Item -Path "$navigatorFolder\$($selectedApp.Name)" -Recurse -Force
+            Write-Host "Configuration folder removed from 'navegator'." -ForegroundColor Green
+        } else {
+            Write-Host "No configuration found in 'navegator' for $($selectedApp.Name)." -ForegroundColor Yellow
+        }
+
+        if ($regPath -and (Test-Path $regPath)) {
+            Remove-Item -Path $regPath -Recurse -Force
+            Write-Host "Registry settings removed for $($selectedApp.Name)." -ForegroundColor Green
+        }
     } else {
         Write-Host "Invalid option. The script will exit." -ForegroundColor Red
     }
