@@ -16,8 +16,8 @@ after using AntWare, switch back to RemoteSigned or Restricted.
 # How To Use?
 - This file like many other internet files that are for powershell is detected as virus, so to download it **disable your antvirus**.
 1. **Close your browser** and see in your __Task Manager__ if it is not working in the background
-2. Download the PowerShell file
-3. Go into your **properties and unlock it** if necessary
+2. Download the archives
+3. Go to the properties of the powershell file ( ps1 ) and unlock it if necessary.
 4. Choose where the navegator folder will be created
 5. Open the "run.bat" file and accept that it runs the pwoershell file as an **administrator**
 6. **Enter the directory** you want the new browser folder to be in
